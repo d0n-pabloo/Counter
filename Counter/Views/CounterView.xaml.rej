@@ -1,0 +1,9 @@
+diff a/Counter/Views/CounterView.xaml b/Counter/Views/CounterView.xaml	(rejected hunks)
+@@ -1,6 +1,6 @@
+ <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+-             x:Class="YourAppNamespace.Views.CounterView">
++             x:Class="Counter.Views.CounterView">
+ 
+     <Frame BackgroundColor="{Binding Color}" Padding="10" CornerRadius="10" Margin="0,5,0,5">
+         <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">

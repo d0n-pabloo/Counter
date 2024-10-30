@@ -1,0 +1,16 @@
+diff a/Counter/Models/CounterSettings.cs b/Counter/Models/CounterSettings.cs	(rejected hunks)
+@@ -1,12 +1,6 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Models
++﻿namespace Counter.Models
+ {
+-    internal class CounterSettings
++    public class CounterSettings
+     {
+         public Guid Id { get; set; }             // Unikalny identyfikator licznika
+         public string Name { get; set; }         // Nazwa licznika

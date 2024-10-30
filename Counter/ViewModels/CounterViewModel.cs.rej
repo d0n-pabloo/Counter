@@ -1,0 +1,30 @@
+diff a/Counter/ViewModels/CounterViewModel.cs b/Counter/ViewModels/CounterViewModel.cs	(rejected hunks)
+@@ -1,18 +1,13 @@
+ ﻿using Counter.Helpers;
+ using Counter.Models;
+-using System;
+-using System.Collections.Generic;
+ using System.ComponentModel;
+-using System.Linq;
+ using System.Runtime.CompilerServices;
+-using System.Text;
+-using System.Threading.Tasks;
+ using System.Windows.Input;
+ 
+ 
+ namespace Counter.ViewModels
+ {
+-    internal class CounterViewModel : INotifyPropertyChanged
++    public class CounterViewModel : INotifyPropertyChanged
+     {
+         private Models.Counter _counter;
+ 
+@@ -21,6 +16,8 @@ namespace Counter.ViewModels
+         public string Name => _counter.Settings.Name;
+         public string Color => _counter.Settings.Color;
+ 
++        public Models.Counter Counter => _counter;
++
+         public int Value
+         {
+             get => _counter.Value;

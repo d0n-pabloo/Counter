@@ -1,0 +1,9 @@
+diff a/Counter/Counter.csproj b/Counter/Counter.csproj	(rejected hunks)
+@@ -50,6 +50,7 @@
+ 
+ 	<ItemGroup>
+ 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
++		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+ 	</ItemGroup>
+ 
+ </Project>

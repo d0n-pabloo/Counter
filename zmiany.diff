@@ -1,0 +1,457 @@
+diff --git a/Counter/App.cs b/Counter/App.cs
+deleted file mode 100644
+index 99b4e27..0000000
+--- a/Counter/App.cs
++++ /dev/null
+@@ -1,12 +0,0 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter
+-{
+-    public class App
+-    {
+-    }
+-}
+diff --git a/Counter/App.xaml.cs b/Counter/App.xaml.cs
+index 14a423d..fe0e141 100644
+--- a/Counter/App.xaml.cs
++++ b/Counter/App.xaml.cs
+@@ -1,4 +1,6 @@
+ ﻿using Counter.Services;
++using Counter.ViewModels;
++using Counter.Views;
+ 
+ namespace Counter;
+ 
+@@ -18,7 +20,7 @@ public partial class App : Application
+         _currentCounters = _counterService.LoadCounters();
+ 
+         // Ustawienie strony głównej aplikacji
+-        MainPage = new NavigationPage(new MainPage());
++        MainPage = new NavigationPage(new MainPage(new MainViewModel(_counterService)));
+     }
+ 
+     protected override void OnStart()
+diff --git a/Counter/AppShell.xaml b/Counter/AppShell.xaml
+index a61f69b..3ad4a68 100644
+--- a/Counter/AppShell.xaml
++++ b/Counter/AppShell.xaml
+@@ -3,7 +3,7 @@
+     x:Class="Counter.AppShell"
+     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+-    xmlns:local="clr-namespace:Counter"
++    xmlns:local="clr-namespace:Counter.Views"
+     Shell.FlyoutBehavior="Disabled">
+ 
+     <ShellContent
+diff --git a/Counter/Counter.csproj b/Counter/Counter.csproj
+index 76dab6d..19502bd 100644
+--- a/Counter/Counter.csproj
++++ b/Counter/Counter.csproj
+@@ -50,6 +50,7 @@
+ 
+ 	<ItemGroup>
+ 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
++		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+ 	</ItemGroup>
+ 
+ </Project>
+diff --git a/Counter/Helpers/Constants.cs b/Counter/Helpers/Constants.cs
+index f96ff05..adfed72 100644
+--- a/Counter/Helpers/Constants.cs
++++ b/Counter/Helpers/Constants.cs
+@@ -1,10 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Helpers
++﻿namespace Counter.Helpers
+ {
+     public static class Constants
+     {
+diff --git a/Counter/Helpers/RelayCommand.cs b/Counter/Helpers/RelayCommand.cs
+index 019a9d2..091955a 100644
+--- a/Counter/Helpers/RelayCommand.cs
++++ b/Counter/Helpers/RelayCommand.cs
+@@ -1,9 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-using System.Windows.Input;
++﻿using System.Windows.Input;
+ 
+ namespace Counter.Helpers
+ {
+diff --git a/Counter/MainPage.xaml b/Counter/MainPage.xaml
+deleted file mode 100644
+index 5f4f5a7..0000000
+--- a/Counter/MainPage.xaml
++++ /dev/null
+@@ -1,41 +0,0 @@
+-﻿<?xml version="1.0" encoding="utf-8" ?>
+-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+-             x:Class="Counter.MainPage">
+-
+-    <ScrollView>
+-        <VerticalStackLayout
+-            Spacing="25"
+-            Padding="30,0"
+-            VerticalOptions="Center">
+-
+-            <Image
+-                Source="dotnet_bot.png"
+-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
+-                HeightRequest="200"
+-                HorizontalOptions="Center" />
+-
+-            <Label
+-                Text="Hello, World!"
+-                SemanticProperties.HeadingLevel="Level1"
+-                FontSize="32"
+-                HorizontalOptions="Center" />
+-
+-            <Label
+-                Text="Welcome to .NET Multi-platform App UI"
+-                SemanticProperties.HeadingLevel="Level2"
+-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
+-                FontSize="18"
+-                HorizontalOptions="Center" />
+-
+-            <Button
+-                x:Name="CounterBtn"
+-                Text="Click me"
+-                SemanticProperties.Hint="Counts the number of times you click"
+-                Clicked="OnCounterClicked"
+-                HorizontalOptions="Center" />
+-
+-        </VerticalStackLayout>
+-    </ScrollView>
+-
+-</ContentPage>
+diff --git a/Counter/MainPage.xaml.cs b/Counter/MainPage.xaml.cs
+deleted file mode 100644
+index 6bcb759..0000000
+--- a/Counter/MainPage.xaml.cs
++++ /dev/null
+@@ -1,24 +0,0 @@
+-﻿namespace Counter;
+-
+-public partial class MainPage : ContentPage
+-{
+-	int count = 0;
+-
+-	public MainPage()
+-	{
+-		InitializeComponent();
+-	}
+-
+-	private void OnCounterClicked(object sender, EventArgs e)
+-	{
+-		count++;
+-
+-		if (count == 1)
+-			CounterBtn.Text = $"Clicked {count} time";
+-		else
+-			CounterBtn.Text = $"Clicked {count} times";
+-
+-		SemanticScreenReader.Announce(CounterBtn.Text);
+-	}
+-}
+-
+diff --git a/Counter/MauiProgram.cs b/Counter/MauiProgram.cs
+index fbce28c..4e26053 100644
+--- a/Counter/MauiProgram.cs
++++ b/Counter/MauiProgram.cs
+@@ -1,4 +1,7 @@
+-﻿using Microsoft.Extensions.Logging;
++﻿using Counter.Services;
++using Counter.ViewModels;
++using Counter.Views;
++using Microsoft.Extensions.Logging;
+ 
+ namespace Counter;
+ 
+@@ -18,7 +21,10 @@ public static class MauiProgram
+ #if DEBUG
+ 		builder.Logging.AddDebug();
+ #endif
+-
+-		return builder.Build();
++        // Rejestracja usług
++        builder.Services.AddSingleton<ICounterService, CounterService>();
++        builder.Services.AddSingleton<MainViewModel>();
++        builder.Services.AddSingleton<MainPage>();
++        return builder.Build();
+ 	}
+ }
+diff --git a/Counter/Models/Counter.cs b/Counter/Models/Counter.cs
+index 242cc34..da695ed 100644
+--- a/Counter/Models/Counter.cs
++++ b/Counter/Models/Counter.cs
+@@ -1,16 +1,10 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Models
++﻿namespace Counter.Models
+ {
+-    internal class Counter
++    public class Counter
+ 
+     {
+         public CounterSettings Settings { get; private set; }  // Ustawienia licznika, np. początkowa wartość, kolor
+-        public int Value { get; private set; }                 // Aktualna wartość licznika
++        public int Value;                 // Aktualna wartość licznika
+ 
+         public Counter(CounterSettings settings)
+         {
+diff --git a/Counter/Models/CounterSettings.cs b/Counter/Models/CounterSettings.cs
+index a312c4e..e09f7f2 100644
+--- a/Counter/Models/CounterSettings.cs
++++ b/Counter/Models/CounterSettings.cs
+@@ -1,12 +1,6 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Models
++﻿namespace Counter.Models
+ {
+-    internal class CounterSettings
++    public class CounterSettings
+     {
+         public Guid Id { get; set; }             // Unikalny identyfikator licznika
+         public string Name { get; set; }         // Nazwa licznika
+diff --git a/Counter/Services/CounterService.cs b/Counter/Services/CounterService.cs
+index 96e9423..2606607 100644
+--- a/Counter/Services/CounterService.cs
++++ b/Counter/Services/CounterService.cs
+@@ -1,10 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Services
++﻿namespace Counter.Services
+ {
+     public class CounterService : ICounterService
+     {
+diff --git a/Counter/Services/DataStorageService.cs b/Counter/Services/DataStorageService.cs
+index 43a1770..060d1bd 100644
+--- a/Counter/Services/DataStorageService.cs
++++ b/Counter/Services/DataStorageService.cs
+@@ -1,9 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-using Newtonsoft.Json;
++﻿using Newtonsoft.Json;
+ 
+ namespace Counter.Services
+ {
+diff --git a/Counter/Services/EncryptionService.cs b/Counter/Services/EncryptionService.cs
+index 3178afa..d2deb64 100644
+--- a/Counter/Services/EncryptionService.cs
++++ b/Counter/Services/EncryptionService.cs
+@@ -1,9 +1,5 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Security.Cryptography;
++﻿using System.Security.Cryptography;
+ using System.Text;
+-using System.Threading.Tasks;
+ 
+ namespace Counter.Services
+ {
+diff --git a/Counter/Services/ICounterService.cs b/Counter/Services/ICounterService.cs
+index 774a39b..7bd7077 100644
+--- a/Counter/Services/ICounterService.cs
++++ b/Counter/Services/ICounterService.cs
+@@ -1,12 +1,6 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Services
++﻿namespace Counter.Services
+ {
+-    internal interface ICounterService
++    public interface ICounterService
+     {
+         List<Models.Counter> LoadCounters();        // Ładuje zapisane liczniki
+         void SaveCounters(List<Models.Counter> counters); // Zapisuje aktualne liczniki
+diff --git a/Counter/Services/IDataStorageService.cs b/Counter/Services/IDataStorageService.cs
+index 01c2226..0a56a0c 100644
+--- a/Counter/Services/IDataStorageService.cs
++++ b/Counter/Services/IDataStorageService.cs
+@@ -1,10 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Services
++﻿namespace Counter.Services
+ {
+     public interface IDataStorageService
+     {
+@@ -13,3 +7,4 @@ namespace Counter.Services
+         string SerializeData(List<Models.Counter> counters); // Serializuje listę liczników do JSON
+         List<Models.Counter> DeserializeData(string jsonData); // Deserializuje JSON na listę liczników
+     }
++}
+\ No newline at end of file
+diff --git a/Counter/Services/IEncryptionService.cs b/Counter/Services/IEncryptionService.cs
+index e435616..8d60994 100644
+--- a/Counter/Services/IEncryptionService.cs
++++ b/Counter/Services/IEncryptionService.cs
+@@ -1,10 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Services
++﻿namespace Counter.Services
+ {
+         public interface IEncryptionService
+         {
+diff --git a/Counter/ViewModels/CounterViewModel.cs b/Counter/ViewModels/CounterViewModel.cs
+index a051b90..b3ab110 100644
+--- a/Counter/ViewModels/CounterViewModel.cs
++++ b/Counter/ViewModels/CounterViewModel.cs
+@@ -1,18 +1,13 @@
+ ﻿using Counter.Helpers;
+ using Counter.Models;
+-using System;
+-using System.Collections.Generic;
+ using System.ComponentModel;
+-using System.Linq;
+ using System.Runtime.CompilerServices;
+-using System.Text;
+-using System.Threading.Tasks;
+ using System.Windows.Input;
+ 
+ 
+ namespace Counter.ViewModels
+ {
+-    internal class CounterViewModel : INotifyPropertyChanged
++    public class CounterViewModel : INotifyPropertyChanged
+     {
+         private Models.Counter _counter;
+ 
+@@ -21,6 +16,8 @@ namespace Counter.ViewModels
+         public string Name => _counter.Settings.Name;
+         public string Color => _counter.Settings.Color;
+ 
++        public Models.Counter Counter => _counter;
++
+         public int Value
+         {
+             get => _counter.Value;
+diff --git a/Counter/ViewModels/MainViewModel.cs b/Counter/ViewModels/MainViewModel.cs
+index 33eb297..ba8212d 100644
+--- a/Counter/ViewModels/MainViewModel.cs
++++ b/Counter/ViewModels/MainViewModel.cs
+@@ -1,13 +1,9 @@
+ ﻿using Counter.Helpers;
+ using Counter.Models;
+-using System;
+-using System.Collections.Generic;
++using Counter.Services;
+ using System.Collections.ObjectModel;
+ using System.ComponentModel;
+-using System.Linq;
+ using System.Runtime.CompilerServices;
+-using System.Text;
+-using System.Threading.Tasks;
+ using System.Windows.Input;
+ 
+ namespace Counter.ViewModels
+diff --git a/Counter/Views/CounterView.xaml b/Counter/Views/CounterView.xaml
+index 6050923..cc2cba0 100644
+--- a/Counter/Views/CounterView.xaml
++++ b/Counter/Views/CounterView.xaml
+@@ -1,6 +1,6 @@
+ <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+-             x:Class="YourAppNamespace.Views.CounterView">
++             x:Class="Counter.Views.CounterView">
+ 
+     <Frame BackgroundColor="{Binding Color}" Padding="10" CornerRadius="10" Margin="0,5,0,5">
+         <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+diff --git a/Counter/Views/CounterView.xaml.cs b/Counter/Views/CounterView.xaml.cs
+index eadd329..5231970 100644
+--- a/Counter/Views/CounterView.xaml.cs
++++ b/Counter/Views/CounterView.xaml.cs
+@@ -1,10 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace Counter.Views
++﻿namespace Counter.Views
+ {
+     public partial class CounterView : ContentView
+     {
+diff --git a/Counter/Views/MainPage.xaml b/Counter/Views/MainPage.xaml
+index 1c35b33..2cde6f7 100644
+--- a/Counter/Views/MainPage.xaml
++++ b/Counter/Views/MainPage.xaml
+@@ -1,12 +1,8 @@
+ <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+-             xmlns:viewmodels="clr-namespace:YourAppNamespace.ViewModels"
+-             xmlns:views="clr-namespace:YourAppNamespace.Views"
+-             x:Class="YourAppNamespace.Views.MainPage">
+-
+-    <ContentPage.BindingContext>
+-        <viewmodels:MainViewModel />
+-    </ContentPage.BindingContext>
++             xmlns:viewmodels="clr-namespace:Counter.ViewModels"
++             xmlns:views="clr-namespace:Counter.Views"
++             x:Class="Counter.Views.MainPage">
+ 
+     <StackLayout Padding="20">
+ 
+diff --git a/Counter/Views/MainPage.xaml.cs b/Counter/Views/MainPage.xaml.cs
+index f1eac46..a716928 100644
+--- a/Counter/Views/MainPage.xaml.cs
++++ b/Counter/Views/MainPage.xaml.cs
+@@ -1,9 +1,4 @@
+ ﻿using Counter.ViewModels;
+-using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+ 
+ namespace Counter.Views
+ {

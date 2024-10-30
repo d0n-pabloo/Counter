@@ -1,0 +1,12 @@
+diff a/Counter/Helpers/RelayCommand.cs b/Counter/Helpers/RelayCommand.cs	(rejected hunks)
+@@ -1,9 +1,4 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-using System.Windows.Input;
++﻿using System.Windows.Input;
+ 
+ namespace Counter.Helpers
+ {

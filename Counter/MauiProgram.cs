@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Counter.Services;
+using Counter.ViewModels;
+using Counter.Views;
+using Microsoft.Extensions.Logging;
 
 namespace Counter;
 
@@ -18,7 +21,10 @@ public static class MauiProgram
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
-
-		return builder.Build();
+        // Rejestracja usług
+        builder.Services.AddSingleton<ICounterService, CounterService>();
+        builder.Services.AddSingleton<MainViewModel>();
+        builder.Services.AddSingleton<MainPage>();
+        return builder.Build();
 	}
 }

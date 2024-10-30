@@ -1,4 +1,6 @@
 ﻿using Counter.Services;
+using Counter.ViewModels;
+using Counter.Views;
 
 namespace Counter;
 
@@ -18,7 +20,7 @@ public partial class App : Application
         _currentCounters = _counterService.LoadCounters();
 
         // Ustawienie strony głównej aplikacji
-        MainPage = new NavigationPage(new MainPage());
+        MainPage = new NavigationPage(new MainPage(new MainViewModel(_counterService)));
     }
 
     protected override void OnStart()
