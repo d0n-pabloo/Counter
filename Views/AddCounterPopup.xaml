@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"      
+       x:Class="CounterApp2.Views.AddCounterPopup">
+    <Frame MinimumWidthRequest="600" MinimumHeightRequest="480">
+        <StackLayout Padding="20">
+            <Label Text="Dodaj nowy licznik" FontSize="24" HorizontalOptions="Center" />
+            <Entry x:Name="NameEntry" Placeholder="Nazwa" />
+            <Entry x:Name="ValueEntry" Placeholder="Wartość początkowa" Keyboard="Numeric" />
+            <Entry x:Name="ColorEntry" Placeholder="Kolor (RGB)" />
+            <Button Text="Stwórz" Clicked="OnCreateClicked" />
+            <Button Text="Anuluj" Clicked="OnCancelClicked" />
+        </StackLayout>
+    </Frame>
+</toolkit:Popup>

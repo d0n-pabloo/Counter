@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CounterApp2.Views.CounterView"
+             Title="{Binding Name}">
+    <ContentPage.Content>
+        <StackLayout Padding="10">
+            <Label Text="{Binding Value}" FontSize="32" TextColor="{Binding Color}" HorizontalOptions="Center" />
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                <Button Text="-" Command="{Binding DecrementCommand}" />
+                <Button Text="+" Command="{Binding IncrementCommand}" />
+                <Button Text="Reset" Command="{Binding ResetCommand}" />
+            </StackLayout>
+            <Button Text="Powrót" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.GoBackCommand}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
