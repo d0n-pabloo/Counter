@@ -12,19 +12,18 @@ namespace CounterApp2
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkit() // Dodaj tę linię
+                .UseMauiCommunityToolkit() 
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            // Rejestracja serwisu
+            
             builder.Services.AddSingleton<ICounterService, CounterService>();
             builder.Services.AddSingleton<MainViewModel>();
             builder.Services.AddTransient<CounterViewModel>();
             builder.Services.AddTransient<MainViewPage>();
-            builder.Services.AddTransient<CounterView>();
 
             return builder.Build();
         }
