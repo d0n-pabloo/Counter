@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace CounterApp2.ViewModels
 {
-    public class MainViewModel : BaseViewModel
+    public class MainViewModel
     {
         private readonly ICounterService _counterService;
         public ObservableCollection<CounterViewModel> Counters { get; set; }

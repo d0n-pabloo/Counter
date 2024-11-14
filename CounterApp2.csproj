@@ -64,10 +64,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Helpers\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Compile Update="Views\MainViewPage.xaml.cs">
 	    <DependentUpon>MainViewPage.xaml</DependentUpon>
 	  </Compile>
